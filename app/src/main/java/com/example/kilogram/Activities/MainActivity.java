@@ -1,10 +1,9 @@
-package com.example.kilogram;
+package com.example.kilogram.Activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +19,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.kilogram.Models.Post;
-import com.example.kilogram.Utilities.BitmapScaler;
+import com.example.kilogram.R;
+import com.example.kilogram.Utils.BitmapScaler;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -41,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivPostImage;
     private Button btnSubmit;
     private Button btnLogout;
+    private Button btnFeed;
     private ParseUser currentUser;
 
     private File photoFile;
@@ -63,9 +63,22 @@ public class MainActivity extends AppCompatActivity {
 
         // Setup the submit button
         setupSubmitButton();
+        
+        // Setup the feed button
+        setupFeed();
 
         // Query posts
-        queryPosts();
+//        queryPosts();
+    }
+
+    private void setupFeed() {
+        btnFeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FeedActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setupCaptureImageButton() {
@@ -125,10 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void savePost(String description, File photoFile) {
-        Post post = new Post();
-        post.setDescription(description);
-        post.setImage(new ParseFile(photoFile));
-        post.setUser(currentUser);
+        Post post = new Post(description, new ParseFile(photoFile), currentUser);
         post.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -170,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
         ivPostImage = (ImageView) findViewById(R.id.ivPostImage);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         btnLogout = (Button) findViewById(R.id.btnLogout);
+        btnFeed = (Button) findViewById(R.id.btnFeed);
     }
 
     // Set up the log out button and attach an onclick listener
@@ -198,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 // We have the camera photo on disk by now
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                 // Resize Bitmap
-                Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(takenImage, 1);
+                Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(takenImage, 200);
                 // Load the taken image into a preview
                 ivPostImage.setImageBitmap(resizedBitmap);
             } else {

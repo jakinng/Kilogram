@@ -1,4 +1,4 @@
-package com.example.kilogram.Utilities;
+package com.example.kilogram.Utils;
 
 import android.graphics.Bitmap;
 
