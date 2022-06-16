@@ -42,7 +42,6 @@ public class CreatePostActivity extends AppCompatActivity {
     private Button btnSubmit;
     private Button btnLogout;
     private Button btnFeed;
-    private ParseUser currentUser;
 
     private File photoFile;
     public String photoFileName = "photo.jpg";
@@ -84,6 +83,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private void goFeedActivity() {
         Intent intent = new Intent(CreatePostActivity.this, FeedActivity.class);
         startActivity(intent);
+        finish();
     }
 
 
@@ -136,7 +136,6 @@ public class CreatePostActivity extends AppCompatActivity {
                     Log.d(TAG, "There is no image on this post!");
                     Toast.makeText(CreatePostActivity.this, "There is no image attached!", Toast.LENGTH_SHORT).show();
                 } else {
-                    currentUser = ParseUser.getCurrentUser();
                     savePost(postDescription, photoFile);
                 }
             }
@@ -144,7 +143,7 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     private void savePost(String description, File photoFile) {
-        Post post = new Post(description, new ParseFile(photoFile), currentUser);
+        Post post = new Post(description, new ParseFile(photoFile), ParseUser.getCurrentUser());
         post.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -196,7 +195,6 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ParseUser.logOut();
-                currentUser = ParseUser.getCurrentUser();
                 goLoginActivity();
             }
         });

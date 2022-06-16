@@ -85,6 +85,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             if (postImage != null) {
                 Glide.with(context)
                         .load(postImage.getUrl())
+                        .placeholder(R.drawable.placeholder_image)
                         .into(ivPostImage);
             }
             // Load the username and description
@@ -95,6 +96,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             if (postImage != null) {
                 Glide.with(context)
                         .load(postImage.getUrl())
+                        .placeholder(R.drawable.placeholder_profile_image)
                         .circleCrop()
                         .into(ivProfile);
             }

@@ -18,6 +18,7 @@ import com.example.kilogram.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +98,9 @@ public class FeedActivity extends AppCompatActivity {
             case R.id.miCreate:
                 openCreateActivity();
                 return true;
+            case R.id.miLogout:
+                ParseUser.logOut();
+                goLoginActivity();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -105,5 +109,11 @@ public class FeedActivity extends AppCompatActivity {
     private void openCreateActivity() {
         Intent intent = new Intent(FeedActivity.this, CreatePostActivity.class);
         startActivity(intent);
+    }
+
+    private void goLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

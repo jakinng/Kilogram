@@ -6,4 +6,8 @@
         android:icon="@drawable/instagram_new_post_outline_24"
         app:showAsAction="ifRoom">
     </item>
+    <item android:id="@+id/miLogout"
+        android:title="Log Out"
+        android:icon="@drawable/logout"
+        app:showAsAction="always" />
 </menu>
