@@ -30,9 +30,6 @@
             android:name=".Activities.PostDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.FeedActivity"
-            android:exported="false" />
-        <activity
             android:name=".Activities.LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -42,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.CreatePostActivity"
+            android:name=".Activities.MainActivity"
             android:exported="true" />
 
         <provider

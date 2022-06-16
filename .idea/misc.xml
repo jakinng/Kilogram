@@ -5,12 +5,18 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2225" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2225" />
+        <entry key="app/src/main/res/layout/activity_create_post.xml" value="0.20408172607421876" />
         <entry key="app/src/main/res/layout/activity_feed.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.34739583333333335" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.46202850341796875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.45795898437500004" />
         <entry key="app/src/main/res/layout/activity_post_detail.xml" value="0.31873779296875004" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.1921875" />
+        <entry key="app/src/main/res/layout/fragment_compose.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_posts.xml" value="0.26766304347826086" />
         <entry key="app/src/main/res/layout/item_post.xml" value="0.6223556518554689" />
         <entry key="app/src/main/res/layout/post_detail.xml" value="0.6235739003057066" />
+        <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.4294031213831019" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.1" />
         <entry key="app/src/main/res/xml/fileprovider.xml" value="0.1" />
       </map>

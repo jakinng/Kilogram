@@ -1,47 +1,73 @@
-package com.example.kilogram.Activities;
+package com.example.kilogram.Fragments;
+
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.example.kilogram.Adapters.PostAdapter;
 import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedActivity extends AppCompatActivity {
-    public static final String TAG = "FeedActivity";
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link PostsFragment# newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class PostsFragment extends Fragment {
+    public static final String TAG = "PostsFragment";
     public static final int MAX_POSTS = 20;
 
     protected PostAdapter adapter;
+
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView rvPosts;
+    private BottomNavigationView bottomNavigationView;
+
+    public PostsFragment() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_posts, container, false);
+    }
 
+    // Triggered soon after onCreateView()
+    // View setup should occur here (view lookups and attaching view listeners)
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupViews(view);
         displayPosts();
         setupSwipeToRefresh();
     }
 
+    private void setupViews(View view) {
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        rvPosts = (RecyclerView) view.findViewById(R.id.rvPosts);
+    }
+
+
     private void setupSwipeToRefresh() {
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -59,12 +85,11 @@ public class FeedActivity extends AppCompatActivity {
 
     private void displayPosts() {
         // Look up the RecyclerView
-        rvPosts = (RecyclerView) findViewById(R.id.rvPosts);
-        adapter = new PostAdapter(this, new ArrayList<>());
+        adapter = new PostAdapter(getContext(), new ArrayList<>());
         queryPosts();
 
         rvPosts.setAdapter(adapter);
-        rvPosts.setLayoutManager(new LinearLayoutManager(this));
+        rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
     private void queryPosts() {
@@ -84,36 +109,5 @@ public class FeedActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.miCreate:
-                openCreateActivity();
-                return true;
-            case R.id.miLogout:
-                ParseUser.logOut();
-                goLoginActivity();
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void openCreateActivity() {
-        Intent intent = new Intent(FeedActivity.this, CreatePostActivity.class);
-        startActivity(intent);
-    }
-
-    private void goLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

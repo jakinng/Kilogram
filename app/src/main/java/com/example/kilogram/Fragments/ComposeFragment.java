@@ -1,24 +1,31 @@
-package com.example.kilogram.Activities;
+package com.example.kilogram.Fragments;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
+import static android.app.Activity.RESULT_OK;
+import static com.example.kilogram.Activities.MainActivity.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.kilogram.Adapters.PostAdapter;
+import com.example.kilogram.Activities.LoginActivity;
 import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
 import com.example.kilogram.Utils.BitmapScaler;
@@ -32,9 +39,13 @@ import com.parse.SaveCallback;
 import java.io.File;
 import java.util.List;
 
-public class CreatePostActivity extends AppCompatActivity {
-    public static final String TAG = "MainActivity";
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link ComposeFragment# newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class ComposeFragment extends Fragment {
+    public static final String TAG = "ComposeFragment";
 
     private EditText etDescription;
     private Button btnCaptureImage;
@@ -46,14 +57,25 @@ public class CreatePostActivity extends AppCompatActivity {
     private File photoFile;
     public String photoFileName = "photo.jpg";
 
+    public ComposeFragment() {
+        // Required empty public constructor
 
+    }
+
+    // Called when Fragment creates its View object hierarchy
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_post);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_compose, container, false);
+    }
 
-        // Attach views to the corresponding instance variables
-        setupViews();
+    // Triggered soon after onCreateView()
+    // View setup should occur here (view lookups and attaching view listeners)
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupViews(view);
 
         // Setup the logout button
         setupLogoutButton();
@@ -63,29 +85,20 @@ public class CreatePostActivity extends AppCompatActivity {
 
         // Setup the submit button
         setupSubmitButton();
-        
+
         // Setup the feed button
-        setupFeed();
-
-        // Query posts
-//        queryPosts();
+//        setupFeed();
     }
 
-    private void setupFeed() {
-        btnFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goFeedActivity();
-            }
-        });
+    // Set up the various views and attach them to the corresponding variables
+    private void setupViews(View view) {
+        etDescription = (EditText) view.findViewById(R.id.etDescription);
+        btnCaptureImage = (Button) view.findViewById(R.id.btnCaptureImage);
+        ivPostImage = (ImageView) view.findViewById(R.id.ivPostImage);
+        btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
+        btnLogout = (Button) view.findViewById(R.id.btnLogout);
+        btnFeed = (Button) view.findViewById(R.id.btnFeed);
     }
-
-    private void goFeedActivity() {
-        Intent intent = new Intent(CreatePostActivity.this, FeedActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
 
     private void setupCaptureImageButton() {
         btnCaptureImage.setOnClickListener(new View.OnClickListener() {
@@ -96,34 +109,6 @@ public class CreatePostActivity extends AppCompatActivity {
         });
     }
 
-    private void launchCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        photoFile = getPhotoFileUri(photoFileName);
-
-        Uri fileProvider = FileProvider.getUriForFile(CreatePostActivity.this, "com.codepath.fileprovider.kilogram", photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            // TODO: use activity launcher instead of startactivityforresult
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-    }
-
-    // Create file reference
-    private File getPhotoFileUri(String fileName) {
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            Log.d(TAG, "Failed to create directory");
-        }
-
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-        return file;
-    }
-
     private void setupSubmitButton() {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,15 +116,52 @@ public class CreatePostActivity extends AppCompatActivity {
                 String postDescription = etDescription.getText().toString();
                 if (postDescription.isEmpty()) {
                     Log.d(TAG, "The post description is empty...");
-                    Toast.makeText(CreatePostActivity.this, "The description is empty!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "The description is empty!", Toast.LENGTH_SHORT).show();
                 } else if (photoFile == null || ivPostImage.getDrawable() == null) {
                     Log.d(TAG, "There is no image on this post!");
-                    Toast.makeText(CreatePostActivity.this, "There is no image attached!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "There is no image attached!", Toast.LENGTH_SHORT).show();
                 } else {
                     savePost(postDescription, photoFile);
                 }
             }
         });
+    }
+
+    private void launchCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoFile = getPhotoFileUri(photoFileName);
+
+        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider.kilogram", photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            // TODO: use activity launcher instead of startactivityforresult
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+//    private void setupFeed() {
+//        btnFeed.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                goFeedActivity();
+//            }
+//        });
+//    }
+
+    // Create file reference
+    private File getPhotoFileUri(String fileName) {
+        // Get safe storage directory for photos
+        // Use `getExternalFilesDir` on Context to access package-specific directories.
+        // This way, we don't need to request external read/write runtime permissions.
+        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Log.d(TAG, "Failed to create directory");
+        }
+
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+        return file;
     }
 
     private void savePost(String description, File photoFile) {
@@ -150,9 +172,9 @@ public class CreatePostActivity extends AppCompatActivity {
                 if (e == null) {
                     etDescription.setText(null);
                     ivPostImage.setImageResource(0);
-                    Toast.makeText(CreatePostActivity.this, "Posting: " + description, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Posting: " + description, Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "Posted successfully: " + description);
-                    goFeedActivity();
+//                    goFeedActivity();
                 } else {
                     Log.e(TAG, "Oh no! The post did not go through...");
                 }
@@ -179,16 +201,6 @@ public class CreatePostActivity extends AppCompatActivity {
         });
     }
 
-    // Set up the various views and attach them to the corresponding variables
-    private void setupViews() {
-        etDescription = (EditText) findViewById(R.id.etDescription);
-        btnCaptureImage = (Button) findViewById(R.id.btnCaptureImage);
-        ivPostImage = (ImageView) findViewById(R.id.ivPostImage);
-        btnSubmit = (Button) findViewById(R.id.btnSubmit);
-        btnLogout = (Button) findViewById(R.id.btnLogout);
-        btnFeed = (Button) findViewById(R.id.btnFeed);
-    }
-
     // Set up the log out button and attach an onclick listener
     private void setupLogoutButton() {
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -201,13 +213,13 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     private void goLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(getContext(), LoginActivity.class);
         startActivity(intent);
-        finish();
+//        finish();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
