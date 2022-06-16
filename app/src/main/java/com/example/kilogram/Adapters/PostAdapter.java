@@ -62,6 +62,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public ImageView ivPostImage;
         public TextView tvUsername;
         public TextView tvDescription;
+        public TextView tvDateCreated;
+        public TextView tvBarUsername;
+        public ImageView ivProfile;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +72,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             ivPostImage = (ImageView) itemView.findViewById(R.id.ivPostImage);
             tvUsername = (TextView) itemView.findViewById(R.id.tvUsername);
             tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
+            tvDateCreated = (TextView) itemView.findViewById(R.id.tvDateCreated);
+            tvBarUsername = (TextView) itemView.findViewById(R.id.tvBarUsername);
+            ivProfile = (ImageView) itemView.findViewById(R.id.ivProfile);
 
             itemView.setOnClickListener(this);
         }
@@ -82,11 +88,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         .into(ivPostImage);
             }
             // Load the username and description
-            try {
-                tvUsername.setText(post.getUser().getUsername());
-                tvDescription.setText(post.getDescription());
-            } catch(Exception e) {
-                Log.d(TAG, e.getMessage());
+            tvUsername.setText(post.getUser().getUsername());
+            tvDescription.setText(post.getDescription());
+            tvDateCreated.setText(Post.calculateTimeAgo(post.getCreatedAt()));
+            tvBarUsername.setText(post.getUser().getUsername());
+            if (postImage != null) {
+                Glide.with(context)
+                        .load(postImage.getUrl())
+                        .circleCrop()
+                        .into(ivProfile);
             }
         }
 

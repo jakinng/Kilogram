@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         if (ParseUser.getCurrentUser() != null) {
-            goMainActivity();
+            goFeedActivity();
         }
 
         etUsername = (EditText) findViewById(R.id.etUsername);
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                     // TODO : better error handling
                     Log.e(TAG, "Issue with login", e);
                 } else {
-                    goMainActivity();
+                    goFeedActivity();
                     Toast.makeText(LoginActivity.this, "Successful login!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -63,7 +63,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, CreatePostActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void goFeedActivity() {
+        Intent intent = new Intent(this, FeedActivity.class);
         startActivity(intent);
         finish();
     }

@@ -1,12 +1,16 @@
 package com.example.kilogram.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.kilogram.Adapters.PostAdapter;
 import com.example.kilogram.Models.Post;
@@ -75,9 +79,31 @@ public class FeedActivity extends AppCompatActivity {
                     adapter.clear();
                     adapter.addAll(queriedPosts);
                 } else {
-                    Log.d(TAG, "I can't get the posts...");
+                    Log.d(TAG, "I can't get the posts..." + e.getMessage());
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.miCreate:
+                openCreateActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void openCreateActivity() {
+        Intent intent = new Intent(FeedActivity.this, CreatePostActivity.class);
+        startActivity(intent);
     }
 }

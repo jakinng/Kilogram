@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.kilogram.Adapters.PostAdapter;
 import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
 import com.example.kilogram.Utils.BitmapScaler;
@@ -31,7 +32,7 @@ import com.parse.SaveCallback;
 import java.io.File;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class CreatePostActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
 
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_create_post);
 
         // Attach views to the corresponding instance variables
         setupViews();
@@ -75,11 +76,16 @@ public class MainActivity extends AppCompatActivity {
         btnFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, FeedActivity.class);
-                startActivity(intent);
+                goFeedActivity();
             }
         });
     }
+
+    private void goFeedActivity() {
+        Intent intent = new Intent(CreatePostActivity.this, FeedActivity.class);
+        startActivity(intent);
+    }
+
 
     private void setupCaptureImageButton() {
         btnCaptureImage.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         photoFile = getPhotoFileUri(photoFileName);
 
-        Uri fileProvider = FileProvider.getUriForFile(MainActivity.this, "com.codepath.fileprovider.kilogram", photoFile);
+        Uri fileProvider = FileProvider.getUriForFile(CreatePostActivity.this, "com.codepath.fileprovider.kilogram", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -125,10 +131,10 @@ public class MainActivity extends AppCompatActivity {
                 String postDescription = etDescription.getText().toString();
                 if (postDescription.isEmpty()) {
                     Log.d(TAG, "The post description is empty...");
-                    Toast.makeText(MainActivity.this, "The description is empty!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreatePostActivity.this, "The description is empty!", Toast.LENGTH_SHORT).show();
                 } else if (photoFile == null || ivPostImage.getDrawable() == null) {
                     Log.d(TAG, "There is no image on this post!");
-                    Toast.makeText(MainActivity.this, "There is no image attached!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreatePostActivity.this, "There is no image attached!", Toast.LENGTH_SHORT).show();
                 } else {
                     currentUser = ParseUser.getCurrentUser();
                     savePost(postDescription, photoFile);
@@ -145,8 +151,9 @@ public class MainActivity extends AppCompatActivity {
                 if (e == null) {
                     etDescription.setText(null);
                     ivPostImage.setImageResource(0);
-                    Toast.makeText(MainActivity.this, "Posting: " + description, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreatePostActivity.this, "Posting: " + description, Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "Posted successfully: " + description);
+                    goFeedActivity();
                 } else {
                     Log.e(TAG, "Oh no! The post did not go through...");
                 }

@@ -3,6 +3,7 @@ package com.example.kilogram.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +12,8 @@ import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
 
 import org.parceler.Parcels;
+
+import java.util.Date;
 
 public class PostDetailActivity extends AppCompatActivity {
     private ImageView ivPostImage;
@@ -40,6 +43,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 .into(ivPostImage);
         tvUsername.setText(post.getUser().getUsername());
         tvDescription.setText(post.getDescription());
-
+        tvDateCreated.setText(Post.calculateTimeAgo(post.getCreatedAt()));
     }
 }
