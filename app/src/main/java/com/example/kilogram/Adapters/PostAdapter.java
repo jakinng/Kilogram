@@ -3,6 +3,10 @@ package com.example.kilogram.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +66,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView ivPostImage;
         public TextView tvUsername;
-        public TextView tvDescription;
         public TextView tvDateCreated;
         public TextView tvBarUsername;
         public ImageView ivProfile;
@@ -72,7 +75,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             ivPostImage = (ImageView) itemView.findViewById(R.id.ivPostImage);
             tvUsername = (TextView) itemView.findViewById(R.id.tvUsername);
-            tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
             tvDateCreated = (TextView) itemView.findViewById(R.id.tvDateCreated);
             tvBarUsername = (TextView) itemView.findViewById(R.id.tvBarUsername);
             ivProfile = (ImageView) itemView.findViewById(R.id.ivProfile);
@@ -92,8 +94,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
             // Load the username and description
             tvUsername.setText(post.getUser().getUsername());
-            tvDescription.setText(post.getDescription());
             tvDateCreated.setText(Post.calculateTimeAgo(post.getCreatedAt()));
+            String username = post.getUser().getUsername();
+            String description = post.getDescription();
+            SpannableString str = new SpannableString(username + " " + description);
+            str.setSpan(new StyleSpan(Typeface.BOLD), 0, username.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvUsername.setText(str);
             tvBarUsername.setText(post.getUser().getUsername());
             if (postImage != null) {
                 Glide.with(context)

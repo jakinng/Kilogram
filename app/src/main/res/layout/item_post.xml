@@ -53,31 +53,15 @@
         android:layout_marginTop="12dp"
         android:textColor="@color/black"
         android:textSize="18sp"
-        android:textStyle="bold"
         tools:layout_editor_absoluteX="113dp"
         tools:layout_editor_absoluteY="306dp"
         tools:text="jakinng" />
 
     <TextView
-        android:id="@+id/tvDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ivPostImage"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="12dp"
-        android:layout_toEndOf="@+id/tvUsername"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        tools:layout_editor_absoluteX="212dp"
-        tools:layout_editor_absoluteY="308dp"
-        tools:text="my newest post" />
-
-    <TextView
         android:id="@+id/tvDateCreated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvUsername"
+        android:layout_below="@id/tvUsername"
         android:layout_alignParentStart="true"
         android:layout_marginStart="12dp"
         android:layout_marginTop="4dp"
