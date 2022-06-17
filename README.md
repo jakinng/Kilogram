@@ -2,7 +2,7 @@
 
 **Kilogram** is a photo sharing app using Parse as its backend.
 
-Time spent: **30** hours spent in total
+Time spent: **40** hours spent in total
 
 ## User Stories
 
@@ -31,7 +31,7 @@ The following **stretch** features are implemented:
 - User Profiles:
   - [x] Allow the logged in user to add a profile photo
   - [x] Display the profile photo with each post
-  - [ ] Tapping on a post's username or profile photo goes to that user's profile page
+  - [x] Tapping on a post's username or profile photo goes to that user's profile page
   - [x] User Profile shows posts in a grid
 - [ ] After the user submits a new post, show an indeterminate progress bar while the post is being uploaded to Parse
 - [ ] User can comment on a post and see all comments for each post in the post details screen.
@@ -41,11 +41,12 @@ The following **additional** features are implemented:
 
 - [x] User can select image from camera roll to upload to a post
 - [x] When a new post is submitted, the feed is reopened with the new post inserted at the top
+- [x] Placeholder images and profile photos are shown while the real images load 
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
-1.
-2.
+1. Using the full power of fragments
+2. How to better implement going from one fragment to another upon clicks
 
 ## Video Walkthrough
 
