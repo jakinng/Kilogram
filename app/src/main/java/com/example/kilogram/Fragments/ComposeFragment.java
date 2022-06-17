@@ -148,11 +148,9 @@ public class ComposeFragment extends Fragment {
                     Log.d(TAG, "The post description is empty...");
                     Toast.makeText(getContext(), "The description is empty!", Toast.LENGTH_SHORT).show();
                 } else if (photoFile != null) {
-                    savePost(postDescription, photoFile);
-                    onComposeFragmentSubmitListener.onButtonClick();
+                    savePostFromFile(postDescription, photoFile);
                 } else if (ivPostImage.getDrawable() != null) {
-                    savePost(postDescription, ivPostImage.getDrawable());
-                    onComposeFragmentSubmitListener.onButtonClick();
+                    savePostFromFile(postDescription, ivPostImage.getDrawable());
                 } else {
                     Log.d(TAG, "There is no image attached!");
                     Toast.makeText(getContext(), "There is no image attached!", Toast.LENGTH_SHORT).show();
@@ -204,15 +202,14 @@ public class ComposeFragment extends Fragment {
         return image;
     }
 
-    private void savePost(String description, File photoFile) {
-        Post post = new Post(description, new ParseFile(photoFile), ParseUser.getCurrentUser());
+    private void savePost(Post post) {
         post.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
                     etDescription.setText(null);
                     ivPostImage.setImageResource(0);
-                    Log.i(TAG, "Posted successfully: " + description);
+                    onComposeFragmentSubmitListener.onButtonClick(post);
                 } else {
                     Log.e(TAG, "Oh no! The post did not go through...");
                 }
@@ -220,7 +217,12 @@ public class ComposeFragment extends Fragment {
         });
     }
 
-    private void savePost(String description, Drawable drawable) {
+    private void savePostFromFile(String description, File photoFile) {
+        Post post = new Post(description, new ParseFile(photoFile), ParseUser.getCurrentUser());
+        savePost(post);
+    }
+
+    private void savePostFromFile(String description, Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         Bitmap.CompressFormat format = Bitmap.CompressFormat.JPEG;
@@ -230,18 +232,7 @@ public class ComposeFragment extends Fragment {
 
         ParseFile image = new ParseFile(photoFileName, bitmapBytes);
         Post post = new Post(description, image, ParseUser.getCurrentUser());
-        post.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    etDescription.setText(null);
-                    ivPostImage.setImageResource(0);
-                    Log.i(TAG, "Posted successfully: " + description);
-                } else {
-                    Log.e(TAG, "Oh no! The post did not go through...");
-                }
-            }
-        });
+        savePost(post);
     }
 
     @Override
@@ -297,6 +288,6 @@ public class ComposeFragment extends Fragment {
     }
 
     public interface OnComposeFragmentSubmitListener {
-        public void onButtonClick();
+        public void onButtonClick(Post post);
     }
 }

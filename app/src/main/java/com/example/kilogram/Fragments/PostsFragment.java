@@ -22,6 +22,8 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +40,19 @@ public class PostsFragment extends Fragment {
 
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView rvPosts;
-    private BottomNavigationView bottomNavigationView;
+
+    Post topPost;
 
     public PostsFragment() {
         // Required empty public constructor
+    }
+
+    public static PostsFragment newInstance(Post post) {
+        PostsFragment fragment = new PostsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Post.class.getSimpleName(), Parcels.wrap(post));
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -49,6 +60,17 @@ public class PostsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_posts, container, false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Set the variable
+        try {
+            topPost = Parcels.unwrap(getArguments().getParcelable(Post.class.getSimpleName()));
+            Log.d(TAG, "yes this actually works" + topPost.getDescription() + topPost.getImage().toString() + topPost.getUser().getUsername());
+            insertPost(0);
+        } catch (Exception e) {}
     }
 
     // Triggered soon after onCreateView()
@@ -109,5 +131,10 @@ public class PostsFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void insertPost(int position) {
+        adapter.addPost(topPost, position);
+        adapter.notifyItemInserted(position);
     }
 }

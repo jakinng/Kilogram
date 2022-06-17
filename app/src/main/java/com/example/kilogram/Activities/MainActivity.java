@@ -8,12 +8,14 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.kilogram.Fragments.ComposeFragment;
 import com.example.kilogram.Fragments.PostsFragment;
 import com.example.kilogram.Fragments.ProfileFragment;
+import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -51,8 +53,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_create:
                         ComposeFragment.OnComposeFragmentSubmitListener onComposeFragmentSubmitListener = new ComposeFragment.OnComposeFragmentSubmitListener() {
                             @Override
-                            public void onButtonClick() {
-                                fragmentManager.beginTransaction().replace(R.id.flContainer, new PostsFragment()).commit();
+                            public void onButtonClick(Post post) {
+                                bottomNavigationView.setSelectedItemId(R.id.action_home);
+                                PostsFragment postsFragment = PostsFragment.newInstance(post);
+                                fragmentManager.beginTransaction().replace(R.id.flContainer, postsFragment).commit();
                             }
                         };
                         fragment = new ComposeFragment(onComposeFragmentSubmitListener);

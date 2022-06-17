@@ -125,4 +125,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         posts.addAll(list);
         notifyDataSetChanged();
     }
+
+    public void addPost(Post postReceived, int position) {
+        posts.add(position, postReceived);
+        Log.d(TAG, "the post was created at" + postReceived.getDescription());
+        notifyItemInserted(position);
+    }
 }
