@@ -1,12 +1,16 @@
 package com.example.kilogram.Fragments;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.kilogram.Activities.MainActivity.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.AudioMetadata;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -37,7 +41,11 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.Format;
 import java.util.List;
 
 /**
@@ -47,9 +55,12 @@ import java.util.List;
  */
 public class ComposeFragment extends Fragment {
     public static final String TAG = "ComposeFragment";
+    public static final int PICK_PHOTO_CODE = 1046;
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
 
     private EditText etDescription;
     private Button btnCaptureImage;
+    private Button btnSelectImage;
     private ImageView ivPostImage;
     private Button btnSubmit;
 
@@ -84,17 +95,18 @@ public class ComposeFragment extends Fragment {
         // Setup the take photo button
         setupCaptureImageButton();
 
+        // Setup the select picture button
+        setupSelectImageButton();
+
         // Setup the submit button
         setupSubmitButton();
-
-        // Setup the feed button
-//        setupFeed();
     }
 
     // Set up the various views and attach them to the corresponding variables
     private void setupViews(View view) {
         etDescription = (EditText) view.findViewById(R.id.etDescription);
         btnCaptureImage = (Button) view.findViewById(R.id.btnCaptureImage);
+        btnSelectImage = (Button) view.findViewById(R.id.btnSelectImage);
         ivPostImage = (ImageView) view.findViewById(R.id.ivPostImage);
         btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
     }
@@ -108,20 +120,42 @@ public class ComposeFragment extends Fragment {
         });
     }
 
+    private void setupSelectImageButton() {
+        btnSelectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create intent for picking a photo from the gallery
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                // As long as there exists such an intent (the result is not null), it's safe to launch for result
+                Log.d(TAG, String.valueOf(intent.resolveActivity(getContext().getPackageManager())));
+                // TODO : there should be a if statement checking if intent.resolveActivity(getContext().getPackageManager())) is null but removing it seems to have fixed my problem so i took it out
+                // Bring up gallery
+                startActivityForResult(intent, PICK_PHOTO_CODE);
+            }
+        });
+    }
+
+
     private void setupSubmitButton() {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String postDescription = etDescription.getText().toString();
+                Log.d(TAG, "drawable: " + String.valueOf(ivPostImage.getDrawable()));
+
                 if (postDescription.isEmpty()) {
                     Log.d(TAG, "The post description is empty...");
                     Toast.makeText(getContext(), "The description is empty!", Toast.LENGTH_SHORT).show();
-                } else if (photoFile == null || ivPostImage.getDrawable() == null) {
-                    Log.d(TAG, "There is no image on this post!");
-                    Toast.makeText(getContext(), "There is no image attached!", Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (photoFile != null) {
                     savePost(postDescription, photoFile);
                     onComposeFragmentSubmitListener.onButtonClick();
+                } else if (ivPostImage.getDrawable() != null) {
+                    savePost(postDescription, ivPostImage.getDrawable());
+                    onComposeFragmentSubmitListener.onButtonClick();
+                } else {
+                    Log.d(TAG, "There is no image attached!");
+                    Toast.makeText(getContext(), "There is no image attached!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -155,8 +189,47 @@ public class ComposeFragment extends Fragment {
         return file;
     }
 
+    public Bitmap loadFromUri(Uri photoUri) {
+        Bitmap image = null;
+        try {
+            if (Build.VERSION.SDK_INT > 27) {
+                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
+                image = ImageDecoder.decodeBitmap(source);
+            } else {
+                image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
     private void savePost(String description, File photoFile) {
         Post post = new Post(description, new ParseFile(photoFile), ParseUser.getCurrentUser());
+        post.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    etDescription.setText(null);
+                    ivPostImage.setImageResource(0);
+                    Log.i(TAG, "Posted successfully: " + description);
+                } else {
+                    Log.e(TAG, "Oh no! The post did not go through...");
+                }
+            }
+        });
+    }
+
+    private void savePost(String description, Drawable drawable) {
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        Bitmap.CompressFormat format = Bitmap.CompressFormat.JPEG;
+        int quality = 100;
+        bitmap.compress(format, quality, stream);
+        byte[] bitmapBytes = stream.toByteArray();
+
+        ParseFile image = new ParseFile(photoFileName, bitmapBytes);
+        Post post = new Post(description, image, ParseUser.getCurrentUser());
         post.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -184,6 +257,41 @@ public class ComposeFragment extends Fragment {
                 ivPostImage.setImageBitmap(resizedBitmap);
             } else {
                 Log.d(TAG, "Picture was not taken.");
+            }
+        }
+
+        if ((data != null) && requestCode == PICK_PHOTO_CODE) {
+            Uri photoUri = data.getData();
+            Bitmap selectedImage = loadFromUri(photoUri);
+            saveBitmapToFile(photoFileName, selectedImage);
+            ivPostImage.setImageBitmap(selectedImage);
+        }
+    }
+
+    public void saveBitmapToFile(String fileName, Bitmap bm) {
+        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Log.d(TAG, "Failed to create directory");
+        }
+
+        File imageFile = new File(mediaStorageDir, fileName);
+        FileOutputStream fos = null;
+
+        Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
+        int quality = 100;
+        try {
+            fos = new FileOutputStream(getPhotoFileUri(photoFileName));
+            bm.compress(format, quality, fos);
+            fos.close();
+        } catch (IOException e) {
+            Log.d(TAG, e.getMessage());
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }

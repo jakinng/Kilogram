@@ -21,7 +21,6 @@ import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
 
     final FragmentManager fragmentManager = getSupportFragmentManager();
     private BottomNavigationView bottomNavigationView;
