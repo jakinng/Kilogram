@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText etUsername;
     private TextInputEditText etPassword;
     private Button btnLogin;
+    private Button btnSignUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,31 @@ public class LoginActivity extends AppCompatActivity {
                 loginUser(username, password);
             }
         });
+        btnSignUp = (Button) findViewById(R.id.btnSignUp);
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String username = etUsername.getText().toString();
+                String password = etPassword.getText().toString();
+                signupUser(username, password);
+            }
+        });
+    }
+
+    private void signupUser(String username, String password) {
+        ParseUser user = new ParseUser();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Toast.makeText(LoginActivity.this, "Username is not unique. Try again!", Toast.LENGTH_SHORT).show();
+                } else {
+                    goMainActivity();
+                }
+            }
+        });
     }
 
     // TODO : add option to sign up
@@ -55,11 +82,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (e != null) {
-                    // TODO : better error handling
-                    Log.e(TAG, "Issue with login", e);
+                    Toast.makeText(LoginActivity.this, "Incorrect Password. Try again!", Toast.LENGTH_SHORT).show();
                 } else {
                     goMainActivity();
-                    Toast.makeText(LoginActivity.this, "Successful login!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
