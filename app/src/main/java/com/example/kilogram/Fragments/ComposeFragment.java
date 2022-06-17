@@ -257,6 +257,7 @@ public class ComposeFragment extends Fragment {
         if ((data != null) && requestCode == PICK_PHOTO_CODE) {
             Uri photoUri = data.getData();
             Bitmap selectedImage = loadFromUri(photoUri);
+            selectedImage = selectedImage.copy(Bitmap.Config.ARGB_8888, true);
             saveBitmapToFile(photoFileName, selectedImage);
             ivPostImage.setImageBitmap(selectedImage);
         }

@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <queries>
         <intent>
@@ -17,18 +17,21 @@
     </queries>
 
     <application
-        android:hardwareAccelerated="false"
-        android:requestLegacyExternalStorage="true"
         android:name=".ParseApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.Kilogram"
         tools:targetApi="31">
+        <activity
+            android:name=".Activities.PostProfileActivity"
+            android:exported="false" />
         <activity
             android:name=".Activities.PostDetailActivity"
             android:exported="false" />

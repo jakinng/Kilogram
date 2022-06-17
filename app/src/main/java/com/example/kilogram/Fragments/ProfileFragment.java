@@ -32,6 +32,7 @@ import com.example.kilogram.Adapters.PostAdapter;
 import com.example.kilogram.Adapters.ProfilePostAdapter;
 import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
+import com.example.kilogram.Utils.EndlessRecyclerViewScrollListener;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -54,6 +55,7 @@ import java.util.List;
 public class ProfileFragment extends Fragment {
     public static final String TAG = "ProfileFragment";
     public static final int NUMBER_OF_COLUMNS = 3;
+    public static final int LOAD_AT_ONCE = 5;
     public static final int PICK_PHOTO_CODE = 1046;
 
     public static final String KEY_PROFILE_PHOTO = "profilePhoto";
@@ -64,6 +66,11 @@ public class ProfileFragment extends Fragment {
     private RecyclerView rvProfile;
     private ImageView ivProfilePicture;
     private TextView tvUsername;
+
+    private EndlessRecyclerViewScrollListener scrollListener;
+
+    private int limit = 0;
+    private boolean loadMore = false;
 
     ParseUser user;
 
@@ -135,22 +142,63 @@ public class ProfileFragment extends Fragment {
         queryPosts();
 
         rvProfile.setAdapter(adapter);
-        rvProfile.setLayoutManager(new GridLayoutManager(getContext(), NUMBER_OF_COLUMNS));
+
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), NUMBER_OF_COLUMNS);
+        rvProfile.setLayoutManager(layoutManager);
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextDataFromApi(page);
+            }
+        };
+        rvProfile.addOnScrollListener(scrollListener);
+    }
+
+    public void loadNextDataFromApi(int offset) {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.include(Post.KEY_USER);
+        query.whereEqualTo("user", user);
+        query.setLimit(LOAD_AT_ONCE);
+        query.addDescendingOrder("createdAt");
+
+        query.setSkip(limit);
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> queriedPosts, ParseException e) {
+                if (e == null) {
+                    limit += queriedPosts.size();
+                    if (queriedPosts.size() != 0) {
+                        loadMore = true;
+                        Log.d(TAG, "the description of the first post is: " + String.valueOf(queriedPosts.get(0).getDescription()));
+                        adapter.addAll(queriedPosts);
+                    } else {
+                        loadMore = false;
+                        Log.d(TAG, "no posts!!!!");
+                    }
+                } else {
+                    Log.d(TAG, "I can't get the posts..." + e.getMessage());
+                }
+            }
+        });
     }
 
     private void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
-        query.setLimit(20);
+        query.whereEqualTo("user", user);
+        query.setLimit(LOAD_AT_ONCE);
         query.addDescendingOrder("createdAt");
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> queriedPosts, ParseException e) {
                 if (e == null) {
-                    Log.d(TAG, "the description of the first post is: " + String.valueOf(queriedPosts.get(0).getDescription()));
-                    adapter.clear();
-                    adapter.addAll(queriedPosts);
+                    if (queriedPosts.size() != 0) {
+                        Log.d(TAG, "the description of the first post is: " + String.valueOf(queriedPosts.get(0).getDescription()));
+                        adapter.clear();
+                        adapter.addAll(queriedPosts);
+                    } else {
+                        Log.d(TAG, "no posts!!!!");
+                    }
                 } else {
                     Log.d(TAG, "I can't get the posts..." + e.getMessage());
                 }

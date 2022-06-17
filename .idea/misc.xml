@@ -14,6 +14,7 @@
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_post_detail.xml" value="0.3732208251953125" />
+        <entry key="app/src/main/res/layout/activity_post_profile.xml" value="0.2265625" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.1921875" />
         <entry key="app/src/main/res/layout/fragment_compose.xml" value="0.4288787841796875" />
         <entry key="app/src/main/res/layout/fragment_posts.xml" value="0.26766304347826086" />
@@ -22,6 +23,7 @@
         <entry key="app/src/main/res/layout/item_profile_post.xml" value="0.2692733764648438" />
         <entry key="app/src/main/res/layout/post_detail.xml" value="0.6235739003057066" />
         <entry key="app/src/main/res/layout/toolbar_main.xml" value="0.2757912418924016" />
+        <entry key="app/src/main/res/menu/menu_back_to_home.xml" value="0.3463541666666667" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.4294031213831019" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.32405853271484375" />
         <entry key="app/src/main/res/xml/fileprovider.xml" value="0.1" />

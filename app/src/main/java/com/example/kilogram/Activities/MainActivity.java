@@ -22,6 +22,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.parse.ParseUser;
 
+import org.parceler.Parcels;
+
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
 
@@ -50,8 +52,12 @@ public class MainActivity extends AppCompatActivity {
                 PostsFragment.GoToProfileListener goToProfileListener = new PostsFragment.GoToProfileListener() {
                     @Override
                     public void onProfileClick(ParseUser user) {
-                        ProfileFragment profileFragment = ProfileFragment.newInstance(user);
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+//                        ProfileFragment profileFragment = ProfileFragment.newInstance(user);
+//                        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+
+                        Intent intent = new Intent(MainActivity.this, PostProfileActivity.class);
+                        intent.putExtra(ParseUser.class.getSimpleName(), Parcels.wrap(user));
+                        startActivity(intent);
                     }
                 };
                 switch (item.getItemId()) {
