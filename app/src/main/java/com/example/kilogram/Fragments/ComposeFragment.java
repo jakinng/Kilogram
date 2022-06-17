@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.kilogram.Activities.LoginActivity;
 import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
@@ -245,7 +246,9 @@ public class ComposeFragment extends Fragment {
                 // Resize Bitmap
                 Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(takenImage, 200);
                 // Load the taken image into a preview
-                ivPostImage.setImageBitmap(resizedBitmap);
+                Glide.with(ComposeFragment.this)
+                        .load(resizedBitmap)
+                        .into(ivPostImage);
             } else {
                 Log.d(TAG, "Picture was not taken.");
             }
