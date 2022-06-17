@@ -5,19 +5,19 @@
     <item
         android:id="@+id/action_home"
         android:enabled="true"
-        android:icon="@drawable/instagram_home_outline_24"
+        android:icon="@drawable/homebutton"
         android:title="Home"
         android:visible="true" />
     <item
         android:id="@+id/action_create"
         android:enabled="true"
-        android:icon="@drawable/instagram_new_post_outline_24"
+        android:icon="@drawable/createbutton"
         android:title="Create"
         android:visible="true" />
     <item
         android:id="@+id/action_profile"
         android:enabled="true"
-        android:icon="@drawable/instagram_user_outline_24"
+        android:icon="@drawable/profilebutton"
         android:title="Profile"
         android:visible="true" />
 </menu>

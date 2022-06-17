@@ -6,42 +6,72 @@
     android:layout_height="match_parent"
     tools:context=".Activities.LoginActivity">
 
-    <include
-        layout="@layout/toolbar_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-    <EditText
-        android:layout_below="@+id/toolbar"
-        android:id="@+id/etUsername"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:autofillHints=""
-        android:hint="@string/username"
-        android:inputType="text"
-        android:minHeight="48dp" />
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/etUsername"
-        android:layout_marginTop="6dp"
-        android:autofillHints=""
-        android:hint="@string/password"
-        android:inputType="text|textWebPassword"
-        android:minHeight="48dp" />
-
-    <Button
-        android:id="@+id/btnLogin"
+    <ImageView
+        android:id="@+id/ivInstagramLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/etPassword"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="6dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/nav_logo_whiteout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outlinedTextField"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="360dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivInstagramLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etUsername"
+            android:layout_width="360dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:hint="Username"
+            android:inputType="text"
+            android:minHeight="48dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_centerInParent="true"
+        android:id="@+id/outlinedTextFieldPassword"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="360dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/outlinedTextField"
+        android:layout_marginTop="12dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="Password"
+            android:inputType="text|textWebPassword"
+            android:minHeight="48dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:layout_centerInParent="true"
+        android:id="@+id/btnLogin"
+        android:layout_width="360dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/outlinedTextFieldPassword"
         android:text="@string/log_in"
-        tools:layout_editor_absoluteX="76dp"
-        tools:layout_editor_absoluteY="38dp" />
+        android:theme="@style/Button.White" />
+
+    <Button
+        android:layout_below="@id/btnLogin"
+        android:layout_centerInParent="true"
+        android:id="@+id/btnSignUp"
+        android:layout_width="360dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="8dp"
+        android:text="Sign up" />
+
 </RelativeLayout>
