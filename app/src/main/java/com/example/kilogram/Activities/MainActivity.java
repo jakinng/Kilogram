@@ -45,10 +45,15 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new PostsFragment();
                         break;
                     case R.id.action_create:
-                        fragment = new ComposeFragment();
+                        ComposeFragment.OnComposeFragmentSubmitListener onComposeFragmentSubmitListener = new ComposeFragment.OnComposeFragmentSubmitListener() {
+                            @Override
+                            public void onButtonClick() {
+                                fragmentManager.beginTransaction().replace(R.id.flContainer, new PostsFragment()).commit();
+                            }
+                        };
+                        fragment = new ComposeFragment(onComposeFragmentSubmitListener);
                         break;
                     case R.id.action_profile:
-                        // TODO: update fragment
                         fragment = new ProfileFragment();
                         break;
                     default:

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -51,15 +52,18 @@ public class ComposeFragment extends Fragment {
     private Button btnCaptureImage;
     private ImageView ivPostImage;
     private Button btnSubmit;
-    private Button btnLogout;
-    private Button btnFeed;
 
     private File photoFile;
     public String photoFileName = "photo.jpg";
 
+    OnComposeFragmentSubmitListener onComposeFragmentSubmitListener;
+
     public ComposeFragment() {
         // Required empty public constructor
+    }
 
+    public ComposeFragment(OnComposeFragmentSubmitListener onComposeFragmentSubmitListener) {
+        this.onComposeFragmentSubmitListener = onComposeFragmentSubmitListener;
     }
 
     // Called when Fragment creates its View object hierarchy
@@ -77,9 +81,6 @@ public class ComposeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setupViews(view);
 
-        // Setup the logout button
-        setupLogoutButton();
-
         // Setup the take photo button
         setupCaptureImageButton();
 
@@ -96,8 +97,6 @@ public class ComposeFragment extends Fragment {
         btnCaptureImage = (Button) view.findViewById(R.id.btnCaptureImage);
         ivPostImage = (ImageView) view.findViewById(R.id.ivPostImage);
         btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
-        btnLogout = (Button) view.findViewById(R.id.btnLogout);
-        btnFeed = (Button) view.findViewById(R.id.btnFeed);
     }
 
     private void setupCaptureImageButton() {
@@ -122,6 +121,7 @@ public class ComposeFragment extends Fragment {
                     Toast.makeText(getContext(), "There is no image attached!", Toast.LENGTH_SHORT).show();
                 } else {
                     savePost(postDescription, photoFile);
+                    onComposeFragmentSubmitListener.onButtonClick();
                 }
             }
         });
@@ -139,15 +139,6 @@ public class ComposeFragment extends Fragment {
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
     }
-
-//    private void setupFeed() {
-//        btnFeed.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                goFeedActivity();
-//            }
-//        });
-//    }
 
     // Create file reference
     private File getPhotoFileUri(String fileName) {
@@ -172,50 +163,12 @@ public class ComposeFragment extends Fragment {
                 if (e == null) {
                     etDescription.setText(null);
                     ivPostImage.setImageResource(0);
-                    Toast.makeText(getContext(), "Posting: " + description, Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "Posted successfully: " + description);
-//                    goFeedActivity();
                 } else {
                     Log.e(TAG, "Oh no! The post did not go through...");
                 }
             }
         });
-    }
-
-    private void queryPosts() {
-        // Specify which class to query
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        // Define query conditions
-        query.include("user");
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if (e == null) {
-                    for (Post post : posts) {
-                        Log.i(TAG, "user: " + post.getUser().getUsername());
-                    }
-                } else {
-                    Log.e(TAG, "Error in querying for posts: " + e.getMessage());
-                }
-            }
-        });
-    }
-
-    // Set up the log out button and attach an onclick listener
-    private void setupLogoutButton() {
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseUser.logOut();
-                goLoginActivity();
-            }
-        });
-    }
-
-    private void goLoginActivity() {
-        Intent intent = new Intent(getContext(), LoginActivity.class);
-        startActivity(intent);
-//        finish();
     }
 
     @Override
@@ -233,5 +186,9 @@ public class ComposeFragment extends Fragment {
                 Log.d(TAG, "Picture was not taken.");
             }
         }
+    }
+
+    public interface OnComposeFragmentSubmitListener {
+        public void onButtonClick();
     }
 }
