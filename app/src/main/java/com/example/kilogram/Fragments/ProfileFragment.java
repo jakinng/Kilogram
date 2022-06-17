@@ -169,18 +169,20 @@ public class ProfileFragment extends Fragment {
         if ((data != null) && requestCode == PICK_PHOTO_CODE) {
             Uri photoUri = data.getData();
             Bitmap selectedImage = loadFromUri(photoUri);
-
+            selectedImage = selectedImage.copy(Bitmap.Config.ARGB_8888, true);
 //            ivProfilePicture.setImageBitmap(selectedImage);
+            Glide.with(getContext())
+                    .load(selectedImage)
+//                                .load(ParseUser.getCurrentUser().getParseFile(KEY_PROFILE_PHOTO))
+                    .placeholder(R.drawable.placeholder_profile_image)
+                    .circleCrop()
+                    .into(ivProfilePicture);
             ParseUser.getCurrentUser().put(KEY_PROFILE_PHOTO, getParseFileFromBitmap(selectedImage));
             ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
-                        Glide.with(getContext())
-                                .load(ParseUser.getCurrentUser().getParseFile(KEY_PROFILE_PHOTO))
-//                                .placeholder(R.drawable.placeholder_profile_image)
-                                .circleCrop()
-                                .into(ivProfilePicture);
+
                     } else {
                         Log.d(TAG, "Error in uploading profile picture!");
                     }
