@@ -21,6 +21,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
@@ -41,17 +42,26 @@ public class PostsFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView rvPosts;
 
+    GoToProfileListener goToProfileListener;
+
     Post topPost;
 
     public PostsFragment() {
         // Required empty public constructor
     }
 
-    public static PostsFragment newInstance(Post post) {
+    public static PostsFragment newInstance(Post post, GoToProfileListener goToProfileListener) {
         PostsFragment fragment = new PostsFragment();
+        fragment.goToProfileListener = goToProfileListener;
         Bundle bundle = new Bundle();
         bundle.putParcelable(Post.class.getSimpleName(), Parcels.wrap(post));
         fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    public static PostsFragment newInstance(GoToProfileListener goToProfileListener) {
+        PostsFragment fragment = new PostsFragment();
+        fragment.goToProfileListener = goToProfileListener;
         return fragment;
     }
 
@@ -107,7 +117,7 @@ public class PostsFragment extends Fragment {
 
     private void displayPosts() {
         // Look up the RecyclerView
-        adapter = new PostAdapter(getContext(), new ArrayList<>());
+        adapter = new PostAdapter(getContext(), new ArrayList<>(), goToProfileListener);
         queryPosts();
 
         rvPosts.setAdapter(adapter);
@@ -136,5 +146,9 @@ public class PostsFragment extends Fragment {
     public void insertPost(int position) {
         adapter.addPost(topPost, position);
         adapter.notifyItemInserted(position);
+    }
+
+    public interface GoToProfileListener {
+        public void onProfileClick(ParseUser user);
     }
 }

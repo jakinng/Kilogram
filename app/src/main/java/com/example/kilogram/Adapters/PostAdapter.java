@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.kilogram.Activities.PostDetailActivity;
+import com.example.kilogram.Fragments.PostsFragment;
 import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
@@ -32,12 +35,16 @@ import java.util.List;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public static final String TAG = "PostAdapter";
 
+    public static final String KEY_PROFILE_PHOTO = "profilePhoto";
+
     private Context context;
     private List<Post> posts;
+    PostsFragment.GoToProfileListener goToProfileListener;
 
-    public PostAdapter(Context context, List<Post> posts) {
+    public PostAdapter(Context context, List<Post> posts, PostsFragment.GoToProfileListener goToProfileListener) {
         this.context = context;
         this.posts = posts;
+        this.goToProfileListener = goToProfileListener;
     }
 
     @NonNull
@@ -69,6 +76,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public TextView tvDateCreated;
         public TextView tvBarUsername;
         public ImageView ivProfile;
+        public RelativeLayout rlPostBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -78,7 +86,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             tvDateCreated = (TextView) itemView.findViewById(R.id.tvDateCreated);
             tvBarUsername = (TextView) itemView.findViewById(R.id.tvBarUsername);
             ivProfile = (ImageView) itemView.findViewById(R.id.ivProfile);
-
+            rlPostBar = (RelativeLayout) itemView.findViewById(R.id.rlPostBar);
             itemView.setOnClickListener(this);
         }
 
@@ -101,13 +109,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             str.setSpan(new StyleSpan(Typeface.BOLD), 0, username.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             tvUsername.setText(str);
             tvBarUsername.setText(post.getUser().getUsername());
-            if (postImage != null) {
-                Glide.with(context)
-                        .load(postImage.getUrl())
-                        .placeholder(R.drawable.placeholder_profile_image)
-                        .circleCrop()
-                        .into(ivProfile);
-            }
+            Glide.with(context)
+                    .load(post.getUser().getParseFile(KEY_PROFILE_PHOTO).getUrl())
+                    .placeholder(R.drawable.placeholder_profile_image)
+                    .circleCrop()
+                    .into(ivProfile);
+
+            rlPostBar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    Log.d(TAG, post.getUser().getUsername());
+                    goToProfileListener.onProfileClick(post.getUser());
+                }
+            });
         }
 
         @Override
@@ -137,4 +151,5 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         Log.d(TAG, "the post was created at" + postReceived.getDescription());
         notifyItemInserted(position);
     }
+
 }

@@ -39,6 +39,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.parceler.Parcels;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,8 +65,16 @@ public class ProfileFragment extends Fragment {
     private ImageView ivProfilePicture;
     private TextView tvUsername;
 
+    ParseUser user;
+
     public ProfileFragment() {
         // Required empty public constructor
+    }
+
+    public static ProfileFragment newInstance(ParseUser user) {
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.user = user;
+        return fragment;
     }
 
     @Override
@@ -84,11 +94,11 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupUsername() {
-        tvUsername.setText(ParseUser.getCurrentUser().getUsername());
+        tvUsername.setText(user.getUsername());
     }
 
     private void setupProfilePicture() {
-        ParseFile profilePhoto = ParseUser.getCurrentUser().getParseFile(KEY_PROFILE_PHOTO);
+        ParseFile profilePhoto = user.getParseFile(KEY_PROFILE_PHOTO);
         if (profilePhoto == null) {
             Glide.with(getContext())
                     .load(R.drawable.placeholder_profile_image)
@@ -170,15 +180,13 @@ public class ProfileFragment extends Fragment {
             Uri photoUri = data.getData();
             Bitmap selectedImage = loadFromUri(photoUri);
             selectedImage = selectedImage.copy(Bitmap.Config.ARGB_8888, true);
-//            ivProfilePicture.setImageBitmap(selectedImage);
             Glide.with(getContext())
                     .load(selectedImage)
-//                                .load(ParseUser.getCurrentUser().getParseFile(KEY_PROFILE_PHOTO))
                     .placeholder(R.drawable.placeholder_profile_image)
                     .circleCrop()
                     .into(ivProfilePicture);
-            ParseUser.getCurrentUser().put(KEY_PROFILE_PHOTO, getParseFileFromBitmap(selectedImage));
-            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+            user.put(KEY_PROFILE_PHOTO, getParseFileFromBitmap(selectedImage));
+            user.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
@@ -201,4 +209,5 @@ public class ProfileFragment extends Fragment {
         ParseFile image = new ParseFile(photoFileName, bitmapBytes);
         return image;
     }
+
 }

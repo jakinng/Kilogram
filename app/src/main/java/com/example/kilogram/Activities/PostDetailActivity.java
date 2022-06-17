@@ -27,6 +27,8 @@ public class PostDetailActivity extends AppCompatActivity {
     public TextView tvBarUsername;
     public ImageView ivProfile;
 
+    public static final String KEY_PROFILE_PHOTO = "profilePhoto";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +52,7 @@ public class PostDetailActivity extends AppCompatActivity {
         Post post = (Post) Parcels.unwrap(getIntent().getParcelableExtra(Post.class.getSimpleName()));
         Glide.with(PostDetailActivity.this)
                 .load(post.getImage().getUrl())
+                .placeholder(R.drawable.placeholder_image)
                 .into(ivPostImage);
         String username = post.getUser().getUsername();
         String description = post.getDescription();
@@ -60,7 +63,7 @@ public class PostDetailActivity extends AppCompatActivity {
         tvBarUsername.setText(post.getUser().getUsername());
         if (post.getImage() != null) {
             Glide.with(PostDetailActivity.this)
-                    .load(post.getImage().getUrl())
+                    .load(post.getUser().getParseFile(KEY_PROFILE_PHOTO).getUrl())
                     .placeholder(R.drawable.placeholder_profile_image)
                     .circleCrop()
                     .into(ivProfile);

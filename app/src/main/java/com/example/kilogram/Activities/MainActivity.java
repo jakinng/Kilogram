@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.kilogram.Adapters.PostAdapter;
 import com.example.kilogram.Fragments.ComposeFragment;
 import com.example.kilogram.Fragments.PostsFragment;
 import com.example.kilogram.Fragments.ProfileFragment;
@@ -46,23 +47,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
+                PostsFragment.GoToProfileListener goToProfileListener = new PostsFragment.GoToProfileListener() {
+                    @Override
+                    public void onProfileClick(ParseUser user) {
+                        ProfileFragment profileFragment = ProfileFragment.newInstance(user);
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+                    }
+                };
                 switch (item.getItemId()) {
                     case R.id.action_home:
-                        fragment = new PostsFragment();
+                        fragment = PostsFragment.newInstance(goToProfileListener);
                         break;
                     case R.id.action_create:
                         ComposeFragment.OnComposeFragmentSubmitListener onComposeFragmentSubmitListener = new ComposeFragment.OnComposeFragmentSubmitListener() {
                             @Override
                             public void onButtonClick(Post post) {
                                 bottomNavigationView.setSelectedItemId(R.id.action_home);
-                                PostsFragment postsFragment = PostsFragment.newInstance(post);
+                                PostsFragment postsFragment = PostsFragment.newInstance(post, goToProfileListener);
                                 fragmentManager.beginTransaction().replace(R.id.flContainer, postsFragment).commit();
                             }
                         };
                         fragment = new ComposeFragment(onComposeFragmentSubmitListener);
                         break;
                     case R.id.action_profile:
-                        fragment = new ProfileFragment();
+                        fragment = ProfileFragment.newInstance(ParseUser.getCurrentUser());
                         break;
                     default:
                         return true;
