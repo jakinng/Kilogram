@@ -27,9 +27,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="0dp"
             android:layout_toEndOf="@+id/ivProfile"
             android:textColor="@color/black"
+            android:textSize="18sp"
             android:textStyle="bold"
             tools:text="jakinng" />
     </RelativeLayout>
@@ -37,11 +38,9 @@
     <ImageView
         android:id="@+id/ivPostImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="450dp"
         android:layout_below="@+id/rlPostBar"
         android:layout_marginTop="0dp"
-        tools:layout_editor_absoluteX="96dp"
-        tools:layout_editor_absoluteY="136dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -53,6 +52,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:textColor="@color/black"
+        android:textSize="18sp"
         android:textStyle="bold"
         tools:layout_editor_absoluteX="113dp"
         tools:layout_editor_absoluteY="306dp"
@@ -68,6 +68,7 @@
         android:layout_toEndOf="@+id/tvUsername"
         android:textAlignment="center"
         android:textColor="@color/black"
+        android:textSize="18sp"
         tools:layout_editor_absoluteX="212dp"
         tools:layout_editor_absoluteY="308dp"
         tools:text="my newest post" />
@@ -81,6 +82,6 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="12dp"
-        android:textSize="12sp"
+        android:textSize="14sp"
         tools:text="now" />
 </RelativeLayout>

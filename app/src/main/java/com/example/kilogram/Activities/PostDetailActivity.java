@@ -21,6 +21,8 @@ public class PostDetailActivity extends AppCompatActivity {
     private TextView tvUsername;
     private TextView tvDescription;
     private TextView tvDateCreated;
+    public TextView tvBarUsername;
+    public ImageView ivProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class PostDetailActivity extends AppCompatActivity {
         tvUsername = (TextView) findViewById(R.id.tvUsername);
         tvDescription = (TextView) findViewById(R.id.tvDescription);
         tvDateCreated = (TextView) findViewById(R.id.tvDateCreated);
+        tvBarUsername = (TextView) findViewById(R.id.tvBarUsername);
+        ivProfile = (ImageView) findViewById(R.id.ivProfile);
     }
 
     private void showPost() {
@@ -48,5 +52,13 @@ public class PostDetailActivity extends AppCompatActivity {
         tvUsername.setText(post.getUser().getUsername());
         tvDescription.setText(post.getDescription());
         tvDateCreated.setText(Post.calculateTimeAgo(post.getCreatedAt()));
+        tvBarUsername.setText(post.getUser().getUsername());
+        if (post.getImage() != null) {
+            Glide.with(PostDetailActivity.this)
+                    .load(post.getImage().getUrl())
+                    .placeholder(R.drawable.placeholder_profile_image)
+                    .circleCrop()
+                    .into(ivProfile);
+        }
     }
 }

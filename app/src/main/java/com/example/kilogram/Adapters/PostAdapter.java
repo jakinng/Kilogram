@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.kilogram.Activities.PostDetailActivity;
 import com.example.kilogram.Models.Post;
 import com.example.kilogram.R;
@@ -86,6 +87,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Glide.with(context)
                         .load(postImage.getUrl())
                         .placeholder(R.drawable.placeholder_image)
+                        .centerCrop()
                         .into(ivPostImage);
             }
             // Load the username and description
