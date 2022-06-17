@@ -1,6 +1,7 @@
 package com.example.kilogram.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,6 +44,12 @@ public class LoginActivity extends AppCompatActivity {
                 loginUser(username, password);
             }
         });
+
+        androidx.appcompat.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setLogo(R.drawable.nav_logo_whiteout);
     }
 
     // TODO : add option to sign up
@@ -68,9 +75,4 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-//    private void goFeedActivity() {
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
 }

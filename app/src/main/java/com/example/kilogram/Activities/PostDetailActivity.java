@@ -1,6 +1,7 @@
 package com.example.kilogram.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,9 @@ public class PostDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_detail);
         setupViews();
         showPost();
+
+        androidx.appcompat.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void setupViews() {
